@@ -1,18 +1,16 @@
-# bunken (文献)
-A chrome extension to download ebooks directly from Goodreads. Fetches ebooks from [LibGen](http://libgen.is), [LibGen Fiction](http://libgen.is/fiction), [Memory Of The World](http://library.memoryoftheworld.org) & [OpenLibrary](https://openlibrary.org).
+# bunken (文献) userscript fork
 
-![](https://media.discordapp.net/attachments/706928005313855620/847449469381509130/unknown.png?width=970&height=701)
+A user script to download ebooks directly from Goodreads. Fetches ebooks from [LibGen](http://libgen.is), [LibGen Fiction](http://libgen.is/fiction), [Memory Of The World](http://library.memoryoftheworld.org) & [OpenLibrary](https://openlibrary.org).
 
-## How to install
-1. Clone this repository.
-2. Open chrome extensions panel by visiting `chrome://extensions`.
-3. Turn developer mode on.
-4. Click on Load Unpacked.
-5. Select the folder containing the repository with the root directory.
-6. Visit any books' page on Goodreads. The ebooks should load under Related Books section.
-7. Choose different sources according to your needs.
+Modified from upstream to work with Violentmonkey on Firefox and Vivaldi, Android Firefox versions that allow installing the Violentmonkey extension (Iceraven, Firefox Nightly, etc), and Android Kiwi Browser via Violentmonkey.
 
-## How to contribute
-Help contribute by using it, finding bugs and opening issues. Pull requests are also appreciated!
+## Modifications I've made from upstream:
 
-API repository available at [laxyapahuja/bunken-api](https://github.com/laxyapahuja/bunken-api).
+* Took the onchange attribute out of the select tag in the template variable and made it into a completely separate function, outside the setupUI function (required for userscript functionality)
+* Moved the injected content to be below the book description instead of under related books (cosmetic, enables use on mobile pages)
+* Added css properties to improve appearance on mobile (cosmetic)
+* Added text indicating which source is being searched (cosmetic)
+
+## Other information
+
+laxyapahuja's API repository is available at [laxyapahuja/bunken-api](https://github.com/laxyapahuja/bunken-api).
