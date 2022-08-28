@@ -1,7 +1,8 @@
 // ==UserScript==
-// @name        Bunken by laxyapahuja, as a userscript
+// @name        Bunken Forked
 // @namespace   https://github.com/holyspiritomb
 // @match       https://www.goodreads.com/book/show/*
+// @website     https://github.com/holyspiritomb/bunken
 // @grant       none
 // @version     0.0.1
 // @author      holyspiritomb
