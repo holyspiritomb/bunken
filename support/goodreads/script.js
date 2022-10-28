@@ -1,14 +1,13 @@
 const API = 'https://api.bunken.tk/'
 
+let isRedesign = !document.querySelector("[property='books:isbn']")
+let bookJSON = isRedesign ? JSON.parse(document.querySelector('[type="application/ld+json"]').innerText) : {}
 let ebookElement = document.createElement('div')
 let ebookResultsElement;
-let relatedElement = document.querySelector('div#buyButtonContainer');
-if (relatedElement == null) {
-    relatedElement = document.querySelector('div.bookDescription');
-}
+let relatedElement = isRedesign ? document.querySelector('.BookActions') : document.querySelector('div.bookDescription')
 let bookTitle = document.querySelector("[property='og:title']").getAttribute("content");
-let ISBNCode = document.querySelector("[property='books:isbn']").getAttribute("content");
-let authorName = document.getElementsByClassName('authorName')[0].innerText
+let ISBNCode = isRedesign ? bookJSON.isbn : document.querySelector("[property='books:isbn']").getAttribute("content");
+let authorName = isRedesign ? bookJSON.author[0].name : document.getElementsByClassName('authorName')[0].innerText
 
 function insertAfter(referenceNode, newNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
