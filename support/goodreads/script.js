@@ -4,7 +4,7 @@ let isRedesign = !document.querySelector("[property='books:isbn']")
 let bookJSON = isRedesign ? JSON.parse(document.querySelector('[type="application/ld+json"]').innerText) : {}
 let ebookElement = document.createElement('div')
 let ebookResultsElement;
-let relatedElement = isRedesign ? document.querySelector('.BookActions') : document.querySelector('[id^="relatedWorks-"]')
+let relatedElement = isRedesign ? document.querySelector('.BookActions') : document.querySelector('div.bookDescription')
 let bookTitle = document.querySelector("[property='og:title']").getAttribute("content");
 let ISBNCode = isRedesign ? bookJSON.isbn : document.querySelector("[property='books:isbn']").getAttribute("content");
 let authorName = isRedesign ? bookJSON.author[0].name : document.getElementsByClassName('authorName')[0].innerText
@@ -33,13 +33,14 @@ function ebookElementInflator(results) {
                 let downloadLinkElement = document.createElement('a')
                 downloadLinkElement.href = download.link
                 downloadLinkElement.textContent = download.format
-                downloadLinkElement.style.color = 'blue'
+                downloadLinkElement.style.color = 'limegreen'
                 downloadElement.appendChild(downloadLinkElement)
                 resultElement.appendChild(downloadElement)
             })
         }
 
         let authorElement = document.createElement('div')
+        authorElement.style = "padding-bottom:10px;"
         authorElement.textContent = book.author
         resultElement.appendChild(authorElement)
 
@@ -58,12 +59,13 @@ function sourceSelect() {
 }
 
 function setupUI() {
-    let template = `<div class="h2Container gradientHeaderContainer">
+    let template = `<div class="h2Container gradientHeaderContainer" style="margin-bottom:10px;">
                         <h2 class="brownBackground">E-Books</h2>
                     </div>
-                    <select id="source" onchange="sourceSelect()">
-                    <option value="libgen/fiction">Source: LibGen Fiction</option>
+                    <div style="width:80%;margin-left:auto;margin-right:auto;margin-top:10px;">
+                    <select id="source">
                     <option value="libgen">Source: LibGen</option>
+                    <option value="libgen/fiction">Source: LibGen Fiction</option>
                     <option value="motw">Source: Memory Of The World</option>
                     <option value="audiobookbay">Source: AudioBookBay</option>
                     <option value="openlibrary">Source: OpenLibrary</option>
@@ -71,13 +73,14 @@ function setupUI() {
                     <div id="ebookResults" class="bigBoxContent containerWithHeaderContent" style="overflow-y: auto; max-height: 300px;" id="resultsDiv">Searching...</div>`
     ebookElement.innerHTML = template
     ebookElement.className = 'bigBox'
-    ebookElement.innerHTML += `<h4>made by <a target="_blank" href="https://laxya.co">laxyapahuja</a></h4><h4>extension not working? message me on <a target="_blank" href="https://discord.gg/GwDraJjMga">discord</a>.</h4>`
+    ebookElement.style = 'border-bottom: 1px solid #CCCCCC;'
+    ebookElement.innerHTML +=  `<h4>made by <a target="_blank" href="https://laxya.co">laxyapahuja</a></h4><h4>modified by <a href="https://github.com/holyspiritomb">holyspiritomb</a></h4><h4>extension not working? message me on <a target="_blank" href="https://discord.gg/GwDraJjMga">discord</a>.</h4>`
     insertAfter(relatedElement, ebookElement)
     ebookResultsElement = document.getElementById('ebookResults')
 }
 
 function search(source) {
-    ebookResultsElement.innerHTML = 'Searching...'
+    ebookResultsElement.innerHTML = `Searching ${source}...`
     fetch(`${API}${source}?title=${encodeURIComponent(bookTitle)}&isbn=${encodeURIComponent(ISBNCode)}&author=${encodeURIComponent(authorName)}`).then(response => {
         response.json().then(res => {
             ebookElementInflator(res)
@@ -86,4 +89,11 @@ function search(source) {
 }
 
 setupUI();
-search('libgen/fiction')
+
+$(document).ready(function() {
+    $("select#source").change(function() {
+       sourceSelect();
+    });
+  });
+
+search('libgen');
