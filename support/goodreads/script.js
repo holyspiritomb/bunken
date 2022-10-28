@@ -92,8 +92,8 @@ setupUI();
 
 $(document).ready(function() {
     $("select#source").change(function() {
-       sourceSelect();
+        sourceSelect();
     });
-  });
+});
 
 search('libgen');
