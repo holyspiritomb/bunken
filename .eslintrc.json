@@ -50,11 +50,6 @@
             {"vars": "local", "args": "all"}
         ],
         "no-whitespace-before-property": ["error"],
-        "semi": [
-            "error",
-            "always",
-            {"omitLastInOneLineBlock": true}
-        ],
         "semi-spacing": [
             "error",
             {"before": false, "after": true }
@@ -76,7 +71,7 @@
         ],
         "switch-colon-spacing": [
             "warn",
-            {"after": true, "before": false}
+            {"after": true, "before": true}
         ]
     }
 }
