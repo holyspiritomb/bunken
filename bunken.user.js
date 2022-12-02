@@ -4,7 +4,7 @@
 // @match       https://www.goodreads.com/book/show/*
 // @website     https://github.com/holyspiritomb/bunken/tree/userscript
 // @grant       none
-// @version     0.0.2
+// @version     0.1.0
 // @author      holyspiritomb
 // @downloadURL https://raw.githubusercontent.com/holyspiritomb/bunken/userscript/bunken.user.js
 // @description Search libgen, memoryoftheworld, audiobookbay, and openlibrary from Goodreads. Forked from https://github.com/laxyapahuja/bunken for use as a userscript.
@@ -14,11 +14,11 @@
 const API = 'https://api.bunken.tk/'
 
 let isRedesign = !document.querySelector("[property='books:isbn']")
-let isOldMobile = (document.querySelector("html.mobile"))
+let isOldMobile = !!(document.querySelector("html.mobile"))
 let bookJSON = isRedesign ? JSON.parse(document.querySelector('[type="application/ld+json"]').innerText) : {}
 let ebookElement = document.createElement('div')
 let ebookResultsElement;
-let relatedElement = isRedesign ? document.querySelector('.BookActions') : isOldMobile ? document.querySelector('div.bookDescription') : document.querySelector('div#buyButtonContainer')
+let relatedElement = isRedesign ? document.querySelector('.BookPageMetadataSection__description') : isOldMobile ? document.querySelector('div.bookDescription') : document.querySelector('div#buyButtonContainer')
 let bookTitle = document.querySelector("[property='og:title']").getAttribute("content");
 let ISBNCode = isRedesign ? bookJSON.isbn : document.querySelector("[property='books:isbn']").getAttribute("content");
 let authorName = isRedesign ? bookJSON.author[0].name : document.getElementsByClassName('authorName')[0].innerText
@@ -26,6 +26,12 @@ let authorName = isRedesign ? bookJSON.author[0].name : document.getElementsByCl
 function insertAfter(referenceNode, newNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
+
+function titleCleanup(title) {
+    return title.replace(/\(.*\)/, "").replace(/^\s+|\s+$/g, '').replace(/[&|,]/g, ' ').replace(/: .*/, '').replace(/[ ]+/, ' ');
+}
+
+bookTitle = titleCleanup(bookTitle);
 
 function ebookElementInflator(results) {
     ebookResultsElement.innerHTML = ''
@@ -66,9 +72,11 @@ function ebookElementInflator(results) {
     })
 }
 
+var value;
+
 function sourceSelect() {
     let e = document.getElementById("source");
-    let value = e.options[e.selectedIndex].value;
+    value = e.options[e.selectedIndex].value;
     search(value)
 }
 
@@ -95,7 +103,13 @@ function setupUI() {
 
 function search(source) {
     ebookResultsElement.innerHTML = `Searching ${source}...`
-    fetch(`${API}${source}?title=${encodeURIComponent(bookTitle)}&isbn=${encodeURIComponent(ISBNCode)}&author=${encodeURIComponent(authorName)}`).then(response => {
+    var apiFetch;
+	if (ISBNCode != undefined) {
+		apiFetch = `${API}${source}?title=${encodeURIComponent(bookTitle)}&isbn=${encodeURIComponent(ISBNCode)}&author=${encodeURIComponent(authorName)}`
+	} else {
+		apiFetch = `${API}${source}?title=${encodeURIComponent(bookTitle)}&author=${encodeURIComponent(authorName)}`
+	}
+    fetch(apiFetch).then(response => {
         response.json().then(res => {
             ebookElementInflator(res)
         })
@@ -110,4 +124,8 @@ $(document).ready(function() {
     });
 });
 
-search('libgen');
+if (document.querySelector("a[href$='genres/non-fiction']") != null) {
+	search('libgen');
+} else {
+	search('libgen/fiction');
+}
